@@ -8,19 +8,19 @@
  */
 const buildSuffixMap = (configObj, e, sep = '-') => {
   const build = (obj, prefix = '') => Object.entries(obj)
-    .reduce((memo, [key, value]) => {
-      const suffix = `${sep}${key}`;
-      let result;
+  .reduce((memo, [key, value]) => {
+    const suffix = `${sep}${key}`;
+    let result;
 
-      if (typeof value === 'object') {
-        result = build(value, suffix);
-      } else {
-        const compoundKey = key === 'DEFAULT' ? prefix : `${prefix}${suffix}`;
-        result = { [e(compoundKey)]: value };
-      }
+    if (typeof value === 'object') {
+      result = build(value, suffix);
+    } else {
+      const compoundKey = key === 'DEFAULT' ? prefix : `${prefix}${suffix}`;
+      result = { [e(compoundKey)]: value };
+    }
 
-      return { ...memo, ...result };
-    }, {});
+    return { ...memo, ...result };
+  }, {});
 
   return build(configObj);
 };
@@ -36,7 +36,7 @@ const buildSuffixMap = (configObj, e, sep = '-') => {
  *                   generated for each suffix/value pair
  */
 const generateUtilitiesFromSuffixes = (suffixMap, func) => Object.entries(suffixMap)
-  .reduce((memo, [key, value]) => ({ ...memo, ...func(key, value) }), {});
+.reduce((memo, [key, value]) => ({ ...memo, ...func(key, value) }), {});
 
 /**
  * Base resets to make the plugin's utilities work
@@ -172,11 +172,27 @@ const generateRadiusUtilities = (key, value) => ({
   }
 });
 
+/**
+ * Generates a width style for a given name/value pair
+ *
+ * @param {string} key   The text to use in the class name
+ * @param {string} value The CSS value to use as the border-radius
+ * @returns {object} The generated rounded track and thumb utilities
+ */
+const generateWidthUtilities = (key, value) => ({
+  [`.scrollbar-w${key}`]: {
+    '&::-webkit-scrollbar': {
+      'width': value
+    }
+  },
+});
+
 module.exports = {
   BASE_STYLES,
   SCROLLBAR_SIZE_UTILITIES,
   buildSuffixMap,
   generateColorUtilities,
   generateRadiusUtilities,
-  generateUtilitiesFromSuffixes
+  generateUtilitiesFromSuffixes,
+  generateWidthUtilities
 };

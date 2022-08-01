@@ -5,7 +5,8 @@ const {
   buildSuffixMap,
   generateColorUtilities,
   generateRadiusUtilities,
-  generateUtilitiesFromSuffixes
+  generateUtilitiesFromSuffixes,
+  generateWidthUtilities
 } = require('./utilities');
 const { scrollbarAwareHover } = require('./variants');
 
@@ -27,11 +28,20 @@ module.exports = plugin(tailwind => {
     );
   }
 
+  let scrollbarWidthUtilities = {};
+  if (scrollbarVariants.includes('width')) {
+    scrollbarWidthUtilities = generateUtilitiesFromSuffixes(
+        buildSuffixMap(tailwind.theme('spacing', {}), tailwind.e),
+        generateWidthUtilities
+    );
+  }
+
   tailwind.addBase(BASE_STYLES);
 
   tailwind.addUtilities({
     ...SCROLLBAR_SIZE_UTILITIES,
-    ...scrollbarRadiusUtilities
+    ...scrollbarRadiusUtilities,
+    ...scrollbarWidthUtilities,
   }, scrollbarVariants.filter(variant => !CUSTOM_VARIANTS.includes(variant)));
 
   tailwind.addUtilities(
